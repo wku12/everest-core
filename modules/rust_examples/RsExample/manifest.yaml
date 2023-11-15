@@ -27,6 +27,7 @@ provides:
 requires:
   their_store:
     interface: kvs
+enable_external_mqtt: false
 metadata:
   license: https://opensource.org/licenses/Apache-2.0
   authors:
