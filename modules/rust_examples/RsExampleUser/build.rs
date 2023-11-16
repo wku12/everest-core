@@ -1,8 +1,7 @@
 use everestrs_build::Builder;
 
-
 pub fn main() {
-    Builder::new("manifest.yaml", "../../..")
+    Builder::new("manifest.yaml", vec!["../../.."])
         .generate()
         .unwrap();
 
