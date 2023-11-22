@@ -1,0 +1,39 @@
+description: Payment terminal module
+config:
+  ip:
+    description: IP Address of Feig terminal
+    default: "192.168.23.50"
+    type: string
+  feig_serial:
+    description: Serial of Feig device
+    default: 17FFE0AA
+    type: string
+  terminal_id:
+    description: Payment terminal ID
+    default: "52525617"
+    type: string
+  currency:
+    description: Currency in ISO 4217 format
+    default: 978
+    type: integer
+  pre_authorization_amount:
+    description: pre_authorization_amount 
+    default: 2500
+    type: integer
+# requires:
+#     session:
+#       interface: session_summary
+#     qcpp_module:
+#       interface: qcpp
+provides:
+  token_provider:
+    interface: auth_token_provider
+    description: Provides an authentication token from the payment terminal
+  # feig_payment_summary:
+  #   interface: feig_terminal
+  #   description: Provides details of an already processed payment
+enable_external_mqtt: false
+metadata:
+  license: https://opensource.org/licenses/Apache-2.0
+  authors:
+    - embedded-team@qwello.eu

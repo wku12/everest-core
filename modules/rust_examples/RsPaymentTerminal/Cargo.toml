@@ -1,0 +1,21 @@
+[package]
+name = "RsPaymentTerminal"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+everestrs = { workspace = true }
+anyhow = "1.0.75"
+payment_terminal = { path = "/home/woj/repos/charge-pole-gen-2/rust/payment_terminal"}
+tokio = { version = "1.32.0", features = ["macros", "rt-multi-thread", "net", "sync"] }
+log = "0.4.20"
+embedded_logger= {  path="/home/woj/repos/charge-pole-gen-2/rust/embedded_logger" }
+proto = { path="/home/woj/repos/charge-pole-gen-2/rust/proto" }
+argh = "0.1.12"
+serde = { version = "1.0.175", features = ["derive"] }
+serde_json = "1"
+
+[build-dependencies]
+everestrs-build = { workspace = true }
