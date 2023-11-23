@@ -39,24 +39,31 @@ fn main() -> Result<()> {
         ip_address: Ipv4Addr::from_str(&config.ip)?,
         feig_config: FeigConfig{currency: config.currency as usize, pre_authorization_amount: config.pre_authorization_amount as usize},
     };
+
+    let mut feig: Option<payment_terminal::feig::Feig> = None;
+    let rt = Arc::new(Builder::new_multi_thread().enable_all().build().unwrap());
+
+    rt.block_on(async {
+        feig = Some(payment_terminal::feig::Feig::new(pt_config).await.unwrap());
+        info!("Ready to read card!");
+    });
+
     let one_class = Arc::new(temp);
 
     let _module = Module::new(
         one_class.clone(),
         one_class.clone(),
     );
-    let rt = Arc::new(Builder::new_multi_thread().enable_all().build().unwrap());
     rt.block_on(async {
-        // TODO: This should be in the on_ready actually
-        let mut feig = payment_terminal::feig::Feig::new(pt_config).await?;
         let s = sleep(Duration::from_secs(5));
         tokio::pin!(s);
         loop {
-            info!("Ready to read card!");
-            let response = feig.read_card().await;
+            let response = feig.as_mut().unwrap().read_card().await;
 
             match response {
                 Ok(card_info) => {
+                    // Wait 5 seconds between subsequent card reads
+                    s.as_mut().reset(Instant::now() + Duration::from_secs(5));
                     match card_info.card_type() {
                         CardTypeEnum::CardTypeBank => {
                             warn!("Received bank card. Not handling this yet");
@@ -75,7 +82,6 @@ fn main() -> Result<()> {
                             debug!("{:?}", token);
                             match one_class.token_provider_callback.lock().unwrap().as_ref() {
                                 Some(m) => {
-                                    println!("Sending token!");
                                     m.provided_token(token).unwrap();
                                 }
                                 None => {}
@@ -84,8 +90,7 @@ fn main() -> Result<()> {
                     }
                     tokio::select! {
                         () = &mut s => {
-                            debug!("Timer elapsed");
-                            s.as_mut().reset(Instant::now() + Duration::from_secs(5));
+                            debug!("Timer elapsed, reading card again.");
                         },
                     }
                 }
