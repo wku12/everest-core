@@ -119,4 +119,5 @@ cc_everest_module(
     ],
     impls = IMPLS,
     data = [":ocpp201_config_files"],
+    linkopts = ["-lcap"],
 )

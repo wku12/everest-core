@@ -46,6 +46,7 @@ use_repo(
     "pugixml",
     "sigslot",
     "com_github_HowardHinnant_date",
+    "com_github_warmcatt_libwebsockets",
 )
 
 ###############################################################################
